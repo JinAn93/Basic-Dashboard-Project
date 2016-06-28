@@ -11,6 +11,23 @@ tr:first-child {
 	font-weight: bold;
 	background-color: #C6C9C4;
 }
+
+h1 {
+	text-align: center;
+}
+
+p {
+	text-align: center;
+}
+
+.contents {
+	position: relative;
+}
+
+.action {
+	position: absolute;
+	bottom: 0;
+}
 </style>
 
 </head>
@@ -21,12 +38,13 @@ tr:first-child {
 	%>
 
 	<h1>
-		Welcome <%=loggedinID%>, you are logged in!
+		Welcome
+		<%=loggedinID%>, you are logged in!
 	</h1>
-	<h2>List of Posts on Dashboard</h2>
-	<table border="3" width="700" height="75">
+	<p>List of Posts on Dashboard</p>
+	<table align="center" border="3" width="1000" height="75">
 		<tr>
-			<td width="400">Title</td>
+			<td width="700">Title</td>
 			<td width="100">Post Date</td>
 			<td width="100">User ID</td>
 			<td width="100">Action</td>
@@ -48,9 +66,11 @@ tr:first-child {
 			</tr>
 		</c:forEach>
 	</table>
-	<a href="newPost">Create a new post</a>
-	<a href="logout">Log out</a>
-	<a href="<c:url value='/edit-${loggedinID}-user' />">Edit Account</a>
-
+	
+	<div id="action" align="center">
+		<a href="newPost">Create a new post</a> 
+		<a href="logout">Log out</a> 
+		<a 	href="<c:url value='/edit-${loggedinID}-user' />">Edit Account</a>
+	</div>
 </body>
 </html>

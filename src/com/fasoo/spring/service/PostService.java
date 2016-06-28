@@ -33,12 +33,10 @@ public class PostService implements IPostService{
 		}		
 	}
 
-	@Override
 	public void deletePostByID(int id) {
 		dao.deletePostById(id);
 	}
 
-	@Override
 	public List<Post> findAllPosts() {
 		return dao.findAllPosts();
 	}

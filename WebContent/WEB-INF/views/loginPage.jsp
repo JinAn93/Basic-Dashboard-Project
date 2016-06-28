@@ -7,7 +7,21 @@
 <title>Login Page</title>
 </head>
 
+<style>
+body {
+	margin: auto;
+	text-align: center;
+	padding: 70px;
+}
+
+h1 {
+	text-align: center;
+}
+</style>
 <body>
+
+	<h1>Welcome to Dashboard Project!</h1>
+
 	<c:choose>
 		<c:when test="${loggedinID == null}">
 			<form action="validate" method="get">
