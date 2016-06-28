@@ -134,6 +134,16 @@ public class AppController {
 		return "success";
 	}
 	
+	@RequestMapping(value = { "/view-{id}-post"}, method = RequestMethod.GET)
+	public String viewPost(@PathVariable int id, ModelMap model){
+		if(model.containsAttribute("user_id")){
+			Post post = postService.findById(id);
+			model.addAttribute("post", post);
+			return "detailedPost";
+		}
+		return "redirect:/login";
+	}
+	
 	@RequestMapping(value = { "/edit-{id}-post"}, method = RequestMethod.GET)
 	public String editPost(@PathVariable int id, ModelMap model){
 		if(model.containsAttribute("user_id")){

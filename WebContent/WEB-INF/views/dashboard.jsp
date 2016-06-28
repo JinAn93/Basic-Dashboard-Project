@@ -24,18 +24,16 @@ tr:first-child {
 		Welcome <%=loggedinID%>, you are logged in!
 	</h1>
 	<h2>List of Posts on Dashboard</h2>
-	<table border="1">
+	<table border="3" width="700" height="75">
 		<tr>
-			<td>Title</td>
-			<td>Contents</td>
-			<td>Post Date</td>
-			<td>User ID</td>
-			<td>Action</td>
+			<td width="400">Title</td>
+			<td width="100">Post Date</td>
+			<td width="100">User ID</td>
+			<td width="100">Action</td>
 		</tr>
 		<c:forEach items="${posts}" var="post">
 			<tr>
-				<td>${post.title}</td>
-				<td>${post.contents}</td>
+				<td><a href="<c:url value='/view-${post.id}-post' />">${post.title}</a></td>
 				<td>${post.post_date}</td>
 				<td>${post.user_id}</td>
 				<c:choose>
