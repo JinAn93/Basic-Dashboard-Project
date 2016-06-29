@@ -148,15 +148,31 @@ public class AppController {
 	public String viewPost(@PathVariable int id, ModelMap model) {
 		if (model.containsAttribute("user_id")) {
 			Post post = postService.findById(id);
-			List<Reply> replies = replyService.findByPostId(post.getId());
 			model.addAttribute("post", post);
-			model.addAttribute("replies", replies);
+			model.addAttribute("reply", new Reply());
+			model.addAttribute("replies", replyService.findByPostId(post.getId()));
 
 			return "detailedPost";
 		}
 		return "redirect:/login";
 	}
+	
+	@RequestMapping(value = { "/view-{id}-post" }, method = RequestMethod.POST)
+	public String saveReply(@PathVariable int id, @Valid Reply reply, BindingResult result, ModelMap model){
+		if (model.containsAttribute("user_id")) {
+			if (result.hasErrors()) {
+				return "detailedPost";
+			}
+			
+			replyService.saveReply(reply);
+			model.addAttribute("replies", replyService.findByPostId(id));
+			return "detailedPost";
 
+		}
+		return "redirect:/login";
+
+	}
+	
 	@RequestMapping(value = { "/edit-{id}-post" }, method = RequestMethod.GET)
 	public String editPost(@PathVariable int id, ModelMap model) {
 		if (model.containsAttribute("user_id")) {
@@ -189,31 +205,11 @@ public class AppController {
 		return "redirect:/login";
 	}
 
-	@RequestMapping(value = { "/new-{post_id}-reply" }, method = RequestMethod.GET)
-	public String newReply(ModelMap model) {
-		if (model.containsAttribute("user_id")) {
-			Reply reply = new Reply();
-			model.addAttribute("reply", reply);
-			return "redirect:/detailedPost";
-
-		}
-		return "redirect:/login";
-	}
-	
-	@RequestMapping(value = {"/new-{post_id}-reply"}, method = RequestMethod.POST)
-	public String saveReply(@Valid Reply reply, BindingResult result, ModelMap model){
-		if (result.hasErrors()) {
-			return "redirect:/detailedPost";
-		}
-		replyService.saveReply(reply);
-		return "redirect:/detailedPost";
-	}
-
 	@RequestMapping(value = { "/delete-{id}-reply" }, method = RequestMethod.GET)
 	public String deleteReply(@PathVariable int id, ModelMap model) {
 		if (model.containsAttribute("user_id")) {
 			replyService.deleteReplyByID(id);
-			return "redirect:/detailedPost";
+			return "detailedPost";
 		}
 		return "redirect:/login";
 	}

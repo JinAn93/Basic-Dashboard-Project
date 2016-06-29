@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.hibernate.transform.Transformers;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import com.fasoo.spring.model.Reply;
@@ -26,14 +26,9 @@ public class ReplyDao extends AbstractDao<Integer, Reply> implements IReplyDao {
 		return (List<Reply>) criteria.list();
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Reply> findByPostId(int post_id) {
-		@SuppressWarnings("unchecked")
-		List<Reply> replyList = getSession()
-				.createSQLQuery("select * from Replies where post_id = :post_id")
-				.setInteger("post_id", post_id)
-				.setResultTransformer(Transformers.aliasToBean(Reply.class))
-				.list();
-		return replyList;
+		return createEntityCriteria().add(Restrictions.eqOrIsNull("post_id", post_id)).list();
 	}
 
 	public void deleteReplyById(int id) {

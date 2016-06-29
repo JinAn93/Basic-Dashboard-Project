@@ -8,12 +8,12 @@
 <title>Dashboard</title>
 
 <style>
-tr:first-child {
+.replyTable tr:nth-child(odd) {
 	font-weight: bold;
 	background-color: #C6C9C4;
 }
 
-div {
+div, td:not(#replyContents) {
 	text-align: center;
 }
 </style>
@@ -24,59 +24,63 @@ div {
 		String loggedinID = (String) session.getAttribute("user_id");
 		request.setAttribute("loggedinID", loggedinID);
 	%>
+	<table align="center" border="3" width="1000" height="500">
+		<tr>
+			<td width="100" height="45">Title</td>
+			<td colspan="3">${post.title}</td>
+		</tr>
+		<tr>
+			<td width="100" height="45">Date Posted</td>
+			<td width="400">${post.post_date}</td>
+			<td width="100" height="45">Created By</td>
+			<td>${post.user_id}</td>
+		</tr>
+		<tr>
+			<td rowspan="2" width="100" height="45">Contents</td>
+			<td rowspan="2" colspan="3">${post.contents}</td>
+		</tr>
 
-	<div id="title">
-		Title: ${post.title}
-	</div>
-	
-	<div id="postDate">
-		Date Posted: ${post.post_date}
-	</div>
-	
-	<div id="userID">
-		Created By: ${post.user_id}
-	</div>
-	
-	<div id="contents">
-		Contents: ${post.contents}
-	</div>
-	
-	
+	</table>
+
 	<div id="replies">
-		<table align="center">
-		<c:forEach items="${replies}" var="reply">
-			<tr>
-				<td>${reply.user_id}</td>
-				<td>${reply.contents}</td>
-				<td>${reply.post_date}</td>
-				<c:choose>
-					<c:when test="${loggedinID == reply.user_id}">
-						<td><a href="<c:url value='/edit-${reply.id}-reply' />">Edit</a>
-							<a href="<c:url value='/delete-${reply.id}-reply' />">Delete</a></td>
-					</c:when>
-					<c:otherwise>
-						<td></td>
-					</c:otherwise>
-				</c:choose>
-			</tr>
-		</c:forEach>
+		<br>
+		<table class="replyTable" align="center">
+			<c:forEach items="${replies}" var="reply">
+				<tr>
+					<td>${reply.user_id}</td>
+					<td id="replyContents">${reply.contents}</td>
+					<td>${reply.post_date}</td>
+					<c:choose>
+						<c:when test="${loggedinID == reply.user_id}">
+							<td><a href="<c:url value='/edit-${reply.id}-reply' />">Edit</a>
+								<a href="<c:url value='/delete-${reply.id}-reply' />">Delete</a></td>
+						</c:when>
+						<c:otherwise>
+							<td></td>
+						</c:otherwise>
+					</c:choose>
+				</tr>
+			</c:forEach>
 			<tr>
 				<form:form method="POST" modelAttribute="reply">
-					<td><form:input path="user_id" id="user_id" value="${loggedinID}" readOnly="true" /></td>
-					<td><form:input path="contents" id="contents" value="Write Your Reply Here!" /></td>
-					<td><form:input path="parent_id" type="hidden" value="0" /></td>
-					<td><a href="<c:url value='/new-${post.id}-reply' />">Reply</a></td>
-					<td><form:input path="post_id" type="hidden" value="${post.id}" /></td>
-					<td><form:input path="depth" type="hidden" value="0" /></td>
+					<td><form:input size="10" path="user_id" id="user_id"
+							value="${loggedinID}" readOnly="true" /></td>
+					<td><form:input size="80" path="contents" id="contents"
+							value="Write Your Reply Here!" /></td>
+					<td><form:input path="parent_id" type="hidden" id="parent_id" value="0" /></td>
+					<td><input type="submit" value="Reply"/></td>
+					<td><form:input path="post_id" type="hidden" id="post_id"
+							value="${post.id}" /></td>
+					<td><form:input path="depth" type="hidden" id="depth" value="0" /></td>
 				</form:form>
 			</tr>
-			
+
 		</table>
 	</div>
-	
+
 	<div align="center" id="action">
 		<a href="dashboard"> Go Back to Dashboard</a>
-		
+
 		<c:choose>
 			<c:when test="${loggedinID == post.user_id}">
 				<a href="<c:url value='/edit-${post.id}-post' />">Edit</a>
