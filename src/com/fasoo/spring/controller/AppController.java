@@ -1,6 +1,5 @@
 package com.fasoo.spring.controller;
 
-import java.util.List;
 import java.util.Locale;
 
 import javax.validation.Valid;
@@ -56,25 +55,20 @@ public class AppController {
 
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
 	public String newUser(ModelMap model) {
-		User user = new User();
-		model.addAttribute("user", user);
+		model.addAttribute("user", new User());
 		model.addAttribute("edit", false);
 		return "registration";
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
-	public String saveUser(@Valid User user, BindingResult result,
-			ModelMap model) {
+	public String saveUser(@Valid User user, BindingResult result, ModelMap model) {
 
 		if (result.hasErrors()) {
 			return "registration";
 		}
 
 		if (!userService.isUserIdUnique(user.getUser_id())) {
-			FieldError userIdError = new FieldError("user", "user_id",
-					messageSource.getMessage("non.unique.user_id",
-							new String[] { user.getUser_id() },
-							Locale.getDefault()));
+			FieldError userIdError = new FieldError("user", "user_id", messageSource.getMessage("non.unique.user_id", new String[] { user.getUser_id() }, Locale.getDefault()));
 			result.addError(userIdError);
 			return "registration";
 		}
@@ -116,8 +110,7 @@ public class AppController {
 	@RequestMapping(value = "/dashboard", method = RequestMethod.GET)
 	public String listPosts(ModelMap model) {
 		if (model.containsAttribute("user_id")) {
-			List<Post> posts = postService.findAllPosts();
-			model.addAttribute("posts", posts);
+			model.addAttribute("posts", postService.findAllPosts());
 			return "dashboard";
 		}
 		return "redirect:/login";
@@ -126,16 +119,14 @@ public class AppController {
 	@RequestMapping(value = "/newPost", method = RequestMethod.GET)
 	public String newPost(ModelMap model) {
 		if (model.containsAttribute("user_id")) {
-			Post post = new Post();
-			model.addAttribute("post", post);
+			model.addAttribute("post", new Post());
 			return "newPost";
 		}
 		return "redirect:/login";
 	}
 
 	@RequestMapping(value = "/newPost", method = RequestMethod.POST)
-	public String savePost(@Valid Post post, BindingResult result,
-			ModelMap model) {
+	public String savePost(@Valid Post post, BindingResult result, ModelMap model) {
 		if (result.hasErrors()) {
 			return "newPost";
 		}
@@ -143,41 +134,22 @@ public class AppController {
 		model.addAttribute("success", "New Post has been saved!");
 		return "success";
 	}
-
-	@RequestMapping(value = { "/view-{id}-post" }, method = RequestMethod.GET)
-	public String viewPost(@PathVariable int id, ModelMap model) {
-		if (model.containsAttribute("user_id")) {
-			Post post = postService.findById(id);
-			model.addAttribute("post", post);
-			model.addAttribute("reply", new Reply());
-			model.addAttribute("replies", replyService.findByPostId(post.getId()));
-
-			return "detailedPost";
-		}
-		return "redirect:/login";
-	}
 	
-	@RequestMapping(value = { "/view-{id}-post" }, method = RequestMethod.POST)
-	public String saveReply(@PathVariable int id, @Valid Reply reply, BindingResult result, ModelMap model){
+	@RequestMapping(value = { "/view-{post_id}-post" }, method = RequestMethod.GET)
+	public String viewPost(@PathVariable int post_id, ModelMap model) {
 		if (model.containsAttribute("user_id")) {
-			if (result.hasErrors()) {
-				return "detailedPost";
-			}
-			
-			replyService.saveReply(reply);
-			model.addAttribute("replies", replyService.findByPostId(id));
-			return "detailedPost";
+			postService.setCurrentPost(postService.findById(post_id));
+			postService.setCurrentPostID(post_id);
 
+			return "redirect:/detailedPost";
 		}
 		return "redirect:/login";
-
 	}
 	
 	@RequestMapping(value = { "/edit-{id}-post" }, method = RequestMethod.GET)
 	public String editPost(@PathVariable int id, ModelMap model) {
 		if (model.containsAttribute("user_id")) {
-			Post post = postService.findById(id);
-			model.addAttribute("post", post);
+			model.addAttribute("post", postService.findById(id));
 			model.addAttribute("edit", true);
 			return "newPost";
 		}
@@ -185,8 +157,7 @@ public class AppController {
 	}
 
 	@RequestMapping(value = { "/edit-{id}-post" }, method = RequestMethod.POST)
-	public String updatePost(@Valid Post post, BindingResult result,
-			ModelMap model, @PathVariable int id) {
+	public String updatePost(@Valid Post post, BindingResult result, ModelMap model, @PathVariable int id) {
 		if (result.hasErrors()) {
 			return "newPost";
 		}
@@ -204,13 +175,60 @@ public class AppController {
 		}
 		return "redirect:/login";
 	}
+	
+	//TODO: edit reply
+	@RequestMapping(value = {"/edit-{post_id}-{reply_id}-reply"}, method = RequestMethod.GET)
+	public String editReply(@PathVariable int post_id, @PathVariable int reply_id, ModelMap model) {
+		
+		return "redirect:/detailedPost";
+	}
+	
+	//TODO: update reply
+	@RequestMapping(value = {"/edit-{post_id}-{reply_id}-reply"}, method = RequestMethod.POST)
+	public String updateReply(@PathVariable int post_id, @PathVariable int reply_id, ModelMap model) {
+		
+		return "redirect:/detailedPost";
+	}
 
-	@RequestMapping(value = { "/delete-{id}-reply" }, method = RequestMethod.GET)
-	public String deleteReply(@PathVariable int id, ModelMap model) {
+
+	@RequestMapping(value = { "/delete-{post_id}-{reply_id}-reply" }, method = RequestMethod.GET)
+	public String deleteReply(@PathVariable int post_id, @PathVariable int reply_id, ModelMap model) {
 		if (model.containsAttribute("user_id")) {
-			replyService.deleteReplyByID(id);
-			return "detailedPost";
+			replyService.deleteReplyByID(reply_id);
+			return "redirect:/detailedPost";
 		}
 		return "redirect:/login";
 	}
+	
+	//TODO: recursive reply
+	@RequestMapping(value= { "/reply-{post_id}-{reply_id}-{reply_parent_id}-{reply_depth}-reply"}, method = RequestMethod.GET)
+	public String recursiveReply(@PathVariable int post_id, @PathVariable int reply_id, @PathVariable int reply_parent_id, ModelMap model){
+		model.addAttribute("recursiveReplyPressed", true);
+		model.addAttribute("recursiveReply", new Reply());
+		
+		return "redirect:/detailedPost";
+	}
+	
+	@RequestMapping(value = {"/detailedPost"}, method = {RequestMethod.GET})
+	public String redirectToDetailedPost(ModelMap model){
+		model.addAttribute("post", postService.getCurrentPost());
+		model.addAttribute("replies", replyService.findByPostId(postService.getCurrentPostID()));
+		model.addAttribute("reply", new Reply());
+		return "detailedPost";
+	}
+	
+	@RequestMapping(value = { "/detailedPost" }, method = RequestMethod.POST)
+	public String saveReply(@Valid Reply reply, BindingResult result, ModelMap model){
+		if (model.containsAttribute("user_id")) {
+			if (result.hasErrors()) {
+				return "detailedPost";
+			}
+			replyService.saveReply(reply);
+			model.addAttribute("replies", replyService.findByPostId(postService.getCurrentPostID()));
+			return "detailedPost";
+		}
+		return "redirect:/login";
+
+	}
+
 }

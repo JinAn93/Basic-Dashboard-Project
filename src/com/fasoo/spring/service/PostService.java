@@ -15,6 +15,9 @@ public class PostService implements IPostService{
 
 	@Autowired
 	private IPostDao dao;
+	
+	private Post currentPost; 
+	private int currentPostID;
 
 	public Post findById(int id) {
 		return dao.findById(id);
@@ -39,5 +42,21 @@ public class PostService implements IPostService{
 
 	public List<Post> findAllPosts() {
 		return dao.findAllPosts();
+	}
+
+	public void setCurrentPost(Post currentPost) {
+		this.currentPost = currentPost;		
+	}
+
+	public Post getCurrentPost() {
+		return this.currentPost;
+	}
+
+	public int getCurrentPostID() {
+		return currentPostID;
+	}
+
+	public void setCurrentPostID(int currentPostID) {
+		this.currentPostID = currentPostID;
 	}
 }

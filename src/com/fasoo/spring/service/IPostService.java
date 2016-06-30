@@ -15,4 +15,12 @@ public interface IPostService {
 	void deletePostByID(int id);
 	
 	List<Post> findAllPosts();
+	
+	void setCurrentPost(Post currentPost);
+	
+	Post getCurrentPost();
+	
+	void setCurrentPostID(int currentPostID);
+	
+	int getCurrentPostID();
 }

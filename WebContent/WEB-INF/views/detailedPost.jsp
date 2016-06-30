@@ -8,8 +8,7 @@
 <title>Dashboard</title>
 
 <style>
-.replyTable tr:nth-child(odd) {
-	font-weight: bold;
+.replyTable tr:nth-last-child(n+2)  {
 	background-color: #C6C9C4;
 }
 
@@ -47,30 +46,35 @@ div, td:not(#replyContents) {
 		<table class="replyTable" align="center">
 			<c:forEach items="${replies}" var="reply">
 				<tr>
-					<td>${reply.user_id}</td>
-					<td id="replyContents">${reply.contents}</td>
-					<td>${reply.post_date}</td>
-					<c:choose>
-						<c:when test="${loggedinID == reply.user_id}">
-							<td><a href="<c:url value='/edit-${reply.id}-reply' />">Edit</a>
-								<a href="<c:url value='/delete-${reply.id}-reply' />">Delete</a></td>
-						</c:when>
-						<c:otherwise>
-							<td></td>
-						</c:otherwise>
-					</c:choose>
+					<td width="80">${reply.user_id}</td>
+					<td width="600" id="replyContents">${reply.contents}</td>
+					<td width="100">${reply.post_date}</td>
+					<td>
+						<a href="<c:url value='/reply-${post.id}-${reply.id}-${reply.parent_id}-${reply.depth}-reply' />">Reply</a>
+								
+						<c:choose>
+							<c:when test="${loggedinID == reply.user_id}">
+						<!--  		<a href="<c:url value='/edit-${post.id}-${reply.id}-reply' />">Edit</a> -->
+								<a href="<c:url value='/delete-${post.id}-${reply.id}-reply' />">Delete</a>
+							</c:when>
+						</c:choose>
+					</td>
 				</tr>
+				
+				<!--  This is where people could write reply of replies -->
+				<c:choose>
+					<c:when test="${recursiveReplyPressed}">
+						<!--  add POST form here -->
+					</c:when>
+				</c:choose>
 			</c:forEach>
-			<tr>
+			<tr id="newReplyRow">
 				<form:form method="POST" modelAttribute="reply">
-					<td><form:input size="10" path="user_id" id="user_id"
-							value="${loggedinID}" readOnly="true" /></td>
-					<td><form:input size="80" path="contents" id="contents"
-							value="Write Your Reply Here!" /></td>
-					<td><form:input path="parent_id" type="hidden" id="parent_id" value="0" /></td>
+					<td colspan="2" ><form:input style='width:100%' path="contents" id="contents" value="Write Your Reply Here!" /></td>
+					<td><form:input path="post_date" id="post_date" value="${reply.post_date}" readOnly="true" /></td>
 					<td><input type="submit" value="Reply"/></td>
-					<td><form:input path="post_id" type="hidden" id="post_id"
-							value="${post.id}" /></td>
+					<td><form:input path="parent_id" type="hidden" id="parent_id" value="0" /></td>
+					<td><form:input path="post_id" type="hidden" id="post_id" value="${post.id}" /></td>
 					<td><form:input path="depth" type="hidden" id="depth" value="0" /></td>
 				</form:form>
 			</tr>
