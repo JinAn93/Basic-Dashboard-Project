@@ -8,81 +8,50 @@
 <title>Dashboard</title>
 
 <style>
-.replyTable tr:nth-last-child(n+2)  {
-	background-color: #C6C9C4;
+
+.action {
+	padding-top: 50px;
+	padding-right: 300px;
+    padding-left: 300px;
 }
 
-div, td:not(#replyContents) {
+.postDetails {
+	margin-left: 300px;
+	margin-right: 300px;
+	border: 1px solid black;
+	width: 1000px; 
+	height: "500";
 	text-align: center;
 }
-</style>
 
+td, tr{
+	border: 1px solid black;
+}
+
+.replies {
+	padding-right: 300px;
+    padding-left: 300px;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+p {
+	line-height: 10px;
+	text-align: left;
+	border-bottom: 1px solid #ddd;
+	text-indent: 
+}
+
+</style>
 </head>
+
 <body>
 	<%
 		String loggedinID = (String) session.getAttribute("user_id");
 		request.setAttribute("loggedinID", loggedinID);
 	%>
-	<table align="center" border="3" width="1000" height="500">
-		<tr>
-			<td width="100" height="45">Title</td>
-			<td colspan="3">${post.title}</td>
-		</tr>
-		<tr>
-			<td width="100" height="45">Date Posted</td>
-			<td width="400">${post.post_date}</td>
-			<td width="100" height="45">Created By</td>
-			<td>${post.user_id}</td>
-		</tr>
-		<tr>
-			<td rowspan="2" width="100" height="45">Contents</td>
-			<td rowspan="2" colspan="3">${post.contents}</td>
-		</tr>
-
-	</table>
-
-	<div id="replies">
-		<br>
-		<table class="replyTable" align="center">
-			<c:forEach items="${replies}" var="reply">
-				<tr>
-					<td width="80">${reply.user_id}</td>
-					<td width="600" id="replyContents">${reply.contents}</td>
-					<td width="100">${reply.post_date}</td>
-					<td>
-						<a href="<c:url value='/reply-${post.id}-${reply.id}-${reply.parent_id}-${reply.depth}-reply' />">Reply</a>
-								
-						<c:choose>
-							<c:when test="${loggedinID == reply.user_id}">
-						<!--  		<a href="<c:url value='/edit-${post.id}-${reply.id}-reply' />">Edit</a> -->
-								<a href="<c:url value='/delete-${post.id}-${reply.id}-reply' />">Delete</a>
-							</c:when>
-						</c:choose>
-					</td>
-				</tr>
-				
-				<!--  This is where people could write reply of replies -->
-				<c:choose>
-					<c:when test="${recursiveReplyPressed}">
-						<!--  add POST form here -->
-					</c:when>
-				</c:choose>
-			</c:forEach>
-			<tr id="newReplyRow">
-				<form:form method="POST" modelAttribute="reply">
-					<td colspan="2" ><form:input style='width:100%' path="contents" id="contents" value="Write Your Reply Here!" /></td>
-					<td><form:input path="post_date" id="post_date" value="${reply.post_date}" readOnly="true" /></td>
-					<td><input type="submit" value="Reply"/></td>
-					<td><form:input path="parent_id" type="hidden" id="parent_id" value="0" /></td>
-					<td><form:input path="post_id" type="hidden" id="post_id" value="${post.id}" /></td>
-					<td><form:input path="depth" type="hidden" id="depth" value="0" /></td>
-				</form:form>
-			</tr>
-
-		</table>
-	</div>
-
-	<div align="center" id="action">
+	
+	<div class="action">
 		<a href="dashboard"> Go Back to Dashboard</a>
 
 		<c:choose>
@@ -91,6 +60,73 @@ div, td:not(#replyContents) {
 				<a href="<c:url value='/delete-${post.id}-post' />">Delete</a>
 			</c:when>
 		</c:choose>
+		<br>
+	</div>
+	
+	<table class="postDetails">
+		<tr>
+			<td width="150" height="45">Title</td>
+			<td colspan="3">${post.title}</td>
+		</tr>
+		<tr>
+			<td width="150" height="45">Date Posted</td>
+			<td width="450">${post.post_date}</td>
+			<td width="150" height="45">Created By</td>
+			<td>${post.user_id}</td>
+		</tr>
+		<tr>
+			<td rowspan="2" width="150" height="200">Contents</td>
+			<td rowspan="2" colspan="3">${post.contents}</td>
+		</tr>
+
+	</table>
+
+	<div class="replies">
+		<br>
+		<div class="replyHistory">
+			<c:forEach items="${replies}" var="reply">
+				<c:set var="depthForEachReply" value="${reply.depth}" />
+				<%
+					Integer indentSize = (Integer) (pageContext.getAttribute("depthForEachReply"));
+					request.setAttribute("indentSize", indentSize*40);
+				%>
+				<p id="replyDisplay" style="text-indent: ${indentSize}px">${reply.user_id}: ${reply.contents} (${reply.post_date})
+				<a href="<c:url value='/reply-${post.id}-${reply.id}-${reply.depth}-reply' />">Reply</a>
+								
+				<c:choose>
+					<c:when test="${loggedinID == reply.user_id}">
+				<!--  		<a href="<c:url value='/edit-${post.id}-${reply.id}-reply' />">Edit</a> -->
+						<a href="<c:url value='/delete-${post.id}-${reply.id}-reply' />">Delete</a>
+					</c:when>
+				</c:choose>
+				
+				<!--  This is where people could write reply of replies -->
+				<c:choose>
+					<c:when test="${recursiveReplyPressed && reply.id == clickedReplyID}">
+						<form:form method="POST" modelAttribute="recursiveReply">
+							<form:input size="75" path="contents" id="contents" value="Write Your Reply Here!" />
+							<form:input size="10" path="post_date" id="post_date" value="${reply.post_date}" readOnly="true" />
+							<input type="submit" value="Reply"/>
+							<form:input path="parent_id" type="hidden" id="parent_id" value="${clickedReplyID}" />
+							<form:input path="post_id" type="hidden" id="post_id" value="${post.id}" />
+							<form:input path="depth" type="hidden" id="depth" value="${replyDepth}" />
+						</form:form>
+					</c:when>
+				</c:choose>
+				</p>
+			</c:forEach>
+		</div>
+			
+		<div id="newReplyRow">
+			<form:form method="POST" modelAttribute="reply">
+				<form:input size="75" path="contents" id="contents" value="Write Your Reply Here!" />
+				<form:input size="10" path="post_date" id="post_date" value="${reply.post_date}" readOnly="true" />
+				<input type="submit" value="Reply"/>
+				<form:input path="parent_id" type="hidden" id="parent_id" value="0" />
+				<form:input path="post_id" type="hidden" id="post_id" value="${post.id}" />
+				<form:input path="depth" type="hidden" id="depth" value="0" />
+			</form:form>
+		</div>
 	</div>
 </body>
 </html>

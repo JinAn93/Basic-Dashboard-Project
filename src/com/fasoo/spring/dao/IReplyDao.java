@@ -39,8 +39,22 @@ public interface IReplyDao {
 	List<Reply> findByPostId (int post_id);
 	
 	/**
+	 * Return sorted list of replies of post_id by parent_id and depth
+	 * @param post_id
+	 * @return
+	 */
+	List<Reply> findSortedReplies(int post_id);
+	/**
 	 * Deletes reply by looking up the id from database
 	 * @param id
 	 */
 	void deleteReplyById (int id);
+	
+	Reply getCurrentlyWorkingReply();
+	
+	void setCurrentlyWorkingReply(Reply currentlyWorkingReply);
+	
+	int getMaxDepth();
+	
+	void setMaxDepth(int maxDepth);
 }

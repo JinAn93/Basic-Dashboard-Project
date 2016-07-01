@@ -201,20 +201,34 @@ public class AppController {
 	}
 	
 	//TODO: recursive reply
-	@RequestMapping(value= { "/reply-{post_id}-{reply_id}-{reply_parent_id}-{reply_depth}-reply"}, method = RequestMethod.GET)
-	public String recursiveReply(@PathVariable int post_id, @PathVariable int reply_id, @PathVariable int reply_parent_id, ModelMap model){
-		model.addAttribute("recursiveReplyPressed", true);
-		model.addAttribute("recursiveReply", new Reply());
-		
-		return "redirect:/detailedPost";
+	@RequestMapping(value= { "/reply-{post_id}-{reply_id}-{reply_depth}-reply"}, method = RequestMethod.GET)
+	public String recursiveReply(@PathVariable int post_id, @PathVariable int reply_id, @PathVariable int reply_depth, ModelMap model){
+		if(model.containsAttribute("user_id")) {
+			replyService.setCurrentlyWorkingReply(replyService.findById(reply_id));
+			return "redirect:/detailedPost";
+		}
+		return "redirect:/login";
 	}
 	
 	@RequestMapping(value = {"/detailedPost"}, method = {RequestMethod.GET})
 	public String redirectToDetailedPost(ModelMap model){
-		model.addAttribute("post", postService.getCurrentPost());
-		model.addAttribute("replies", replyService.findByPostId(postService.getCurrentPostID()));
-		model.addAttribute("reply", new Reply());
-		return "detailedPost";
+		if (model.containsAttribute("user_id")) {
+			model.addAttribute("post", postService.getCurrentPost());
+			model.addAttribute("replies", replyService.findSortedReplies(postService.getCurrentPostID()));
+			model.addAttribute("reply", new Reply());
+			if(replyService.getCurrentlyWorkingReply() != null) {
+				int newDepth = replyService.getCurrentlyWorkingReply().getDepth() + 1;
+				model.addAttribute("recursiveReplyPressed", true);
+				model.addAttribute("recursiveReply", new Reply());
+				model.addAttribute("clickedReplyID", replyService.getCurrentlyWorkingReply().getId());
+				model.addAttribute("replyDepth", newDepth);
+				if(newDepth > replyService.getMaxDepth())
+					replyService.setMaxDepth(newDepth);
+			}
+			replyService.setCurrentlyWorkingReply(null);
+			return "detailedPost";
+		}
+		return "redirect:/login";
 	}
 	
 	@RequestMapping(value = { "/detailedPost" }, method = RequestMethod.POST)
@@ -224,7 +238,9 @@ public class AppController {
 				return "detailedPost";
 			}
 			replyService.saveReply(reply);
-			model.addAttribute("replies", replyService.findByPostId(postService.getCurrentPostID()));
+			model.addAttribute("replies", replyService.findSortedReplies(reply.getPost_id()));
+			model.addAttribute("post", postService.getCurrentPost());
+			
 			return "detailedPost";
 		}
 		return "redirect:/login";

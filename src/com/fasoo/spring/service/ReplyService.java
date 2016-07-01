@@ -44,4 +44,24 @@ public class ReplyService implements IReplyService {
 	public List<Reply> findByPostId(int post_id) {
 		return dao.findByPostId(post_id);
 	}
+
+	public void setCurrentlyWorkingReply(Reply currentlyWorkingReply) {
+		dao.setCurrentlyWorkingReply(currentlyWorkingReply);
+	}
+
+	public Reply getCurrentlyWorkingReply() {
+		return dao.getCurrentlyWorkingReply();
+	}
+
+	public List<Reply> findSortedReplies(int post_id) {
+		return dao.findSortedReplies(post_id);
+	}
+
+	public void setMaxDepth(int maxDepth) {
+		dao.setMaxDepth(maxDepth);		
+	}
+
+	public int getMaxDepth() {
+		return dao.getMaxDepth();
+	}
 }

@@ -17,4 +17,14 @@ public interface IReplyService {
 	List<Reply> findAllReplies();
 	
 	List<Reply> findByPostId(int post_id);
+	
+	List<Reply> findSortedReplies(int post_id);
+	
+	void setCurrentlyWorkingReply(Reply currentlyWorkingReply);
+	
+	Reply getCurrentlyWorkingReply();
+	
+	void setMaxDepth(int maxDepth);
+	
+	int getMaxDepth();
 }
