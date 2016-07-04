@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Dashboard</title>
+<title>Detailed Post</title>
 
 <style>
 
@@ -33,6 +33,10 @@ td, tr{
     padding-left: 300px;
     border-collapse: collapse;
     width: 100%;
+}
+
+#editedReply {
+    padding-left: ${indentSize}px;
 }
 
 p {
@@ -84,28 +88,42 @@ p {
 	<div class="replies">
 		<br>
 		<div class="replyHistory">
-			<c:forEach items="${replies}" var="reply">
-				<c:set var="depthForEachReply" value="${reply.depth}" />
+			<c:forEach items="${replies}" var="onereply">
+				<c:set var="depthForEachReply" value="${onereply.depth}" />
 				<%
 					Integer indentSize = (Integer) (pageContext.getAttribute("depthForEachReply"));
 					request.setAttribute("indentSize", indentSize*40);
 				%>
-				<p id="replyDisplay" style="text-indent: ${indentSize}px">${reply.user_id}: ${reply.contents} (${reply.post_date})
-				<a href="<c:url value='/reply-${post.id}-${reply.id}-${reply.depth}-reply' />">Reply</a>
-								
 				<c:choose>
-					<c:when test="${loggedinID == reply.user_id}">
-				<!--  		<a href="<c:url value='/edit-${post.id}-${reply.id}-reply' />">Edit</a> -->
-						<a href="<c:url value='/delete-${post.id}-${reply.id}-reply' />">Delete</a>
+					<c:when test="${editReplyPressed && onereply.id == clickedReplyID}">
+						<form:form id="editedReply" method="POST" modelAttribute="editReply">
+							<form:input size="75" path="contents" id="contents" value="${onereply.contents}" />
+							<form:input size="10" path="post_date" id="post_date" value="${onereply.post_date}" readOnly="true" />
+							<input type="submit" value="Edit"/>
+							<form:input path="parent_id" type="hidden" id="parent_id" value="${onereply.parent_id}" />
+							<form:input path="post_id" type="hidden" id="post_id" value="${onereply.post_id}" />
+							<form:input path="depth" type="hidden" id="depth" value="${onereply.depth}" />
+							<form:input path="id" type="hidden" id="id" value="${onereply.id}" />
+						</form:form>
 					</c:when>
+					<c:otherwise>
+						<p id="replyDisplay" style="text-indent: ${indentSize}px">${onereply.user_id}: ${onereply.contents} (${onereply.post_date})
+						<a href="<c:url value='/reply-${post.id}-${onereply.id}-${onereply.depth}-reply' />">Reply</a>
+						<c:choose>
+							<c:when test="${loggedinID == onereply.user_id}">
+							<a href="<c:url value='/edit-${post.id}-${onereply.id}-reply' />">Edit</a>
+							<a href="<c:url value='/delete-${post.id}-${onereply.id}-reply' />">Delete</a>
+							</c:when>
+						</c:choose>
+						</p>
+					</c:otherwise>
 				</c:choose>
-				
 				<!--  This is where people could write reply of replies -->
 				<c:choose>
-					<c:when test="${recursiveReplyPressed && reply.id == clickedReplyID}">
+					<c:when test="${recursiveReplyPressed && onereply.id == clickedReplyID}">
 						<form:form method="POST" modelAttribute="recursiveReply">
 							<form:input size="75" path="contents" id="contents" value="Write Your Reply Here!" />
-							<form:input size="10" path="post_date" id="post_date" value="${reply.post_date}" readOnly="true" />
+							<form:input size="10" path="post_date" id="post_date" value="${onereply.post_date}" readOnly="true" />
 							<input type="submit" value="Reply"/>
 							<form:input path="parent_id" type="hidden" id="parent_id" value="${clickedReplyID}" />
 							<form:input path="post_id" type="hidden" id="post_id" value="${post.id}" />
@@ -113,7 +131,6 @@ p {
 						</form:form>
 					</c:when>
 				</c:choose>
-				</p>
 			</c:forEach>
 		</div>
 			

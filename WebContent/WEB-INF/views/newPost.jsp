@@ -13,13 +13,24 @@
 .error {
 	color: #ff0000;
 }
+
+body {
+	margin: auto;
+	text-align: center;
+	padding: 70px;
+}
+
+h1 {
+	text-align: center;
+}
+
 </style>
 
 </head>
 
 <body>
 	<form:form method="POST" modelAttribute="post">
-		<table>
+		<table align="center">
 			<tr>
 				<td><label for="title">Title: </label></td>
 				<td><form:input path="title" id="title" /></td>

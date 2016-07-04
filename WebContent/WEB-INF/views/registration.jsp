@@ -13,23 +13,35 @@
 .error {
 	color: #ff0000;
 }
+
+body {
+	margin: auto;
+	text-align: center;
+	padding: 70px;
+}
+
+h1 {
+	text-align: center;
+}
 </style>
 
 </head>
 
 <body>
 
-	<c:choose>
-		<c:when test="${edit}">
-			<h2>Modify Your Account!</h2>
-		</c:when>
-		<c:otherwise>
-			<h2>Create Your Account!</h2>
-		</c:otherwise>
-	</c:choose>
+	<div class="Instruction">
+		<c:choose>
+			<c:when test="${edit}">
+				<h1>Modify Your Account!</h1>
+			</c:when>
+			<c:otherwise>
+				<h1>Create Your Account!</h1>
+			</c:otherwise>
+		</c:choose>
+	</div>
 
 	<form:form method="POST" modelAttribute="user">
-		<table>
+		<table class="userDetails" align="center">
 			<tr>
 				<td><label for="name">Name: </label></td>
 				<td><form:input path="name" id="name" /></td>
@@ -75,7 +87,7 @@
 		</table>
 	</form:form>
 	<br />
-	<br /> Go back to
-	<a href="login">Login Page</a>
+	<br /> 
+	Go back to <a href="login">Login Page</a>
 </body>
 </html>

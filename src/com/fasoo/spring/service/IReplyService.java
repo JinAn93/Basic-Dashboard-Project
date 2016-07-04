@@ -27,4 +27,8 @@ public interface IReplyService {
 	void setMaxDepth(int maxDepth);
 	
 	int getMaxDepth();
+	
+	void setStatus (int status);
+	
+	int getStatus();
 }

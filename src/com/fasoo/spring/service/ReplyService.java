@@ -16,6 +16,8 @@ public class ReplyService implements IReplyService {
 	@Autowired
 	private IReplyDao dao;
 	
+	private int status = 0;
+	
 	public Reply findById(int id) {
 		return dao.findById(id);
 	}
@@ -26,6 +28,7 @@ public class ReplyService implements IReplyService {
 
 	public void updateReply(Reply reply) {
 		Reply entity = dao.findById(reply.getId());
+		System.out.println("Here is the reply ID: " + reply.getId());
 		if(entity != null){
 			entity.setContents(reply.getContents());
 			entity.setPost_date(reply.getPost_date());
@@ -63,5 +66,13 @@ public class ReplyService implements IReplyService {
 
 	public int getMaxDepth() {
 		return dao.getMaxDepth();
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
 	}
 }

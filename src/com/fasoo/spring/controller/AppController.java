@@ -140,6 +140,7 @@ public class AppController {
 		if (model.containsAttribute("user_id")) {
 			postService.setCurrentPost(postService.findById(post_id));
 			postService.setCurrentPostID(post_id);
+			replyService.setStatus(0);
 
 			return "redirect:/detailedPost";
 		}
@@ -176,20 +177,16 @@ public class AppController {
 		return "redirect:/login";
 	}
 	
-	//TODO: edit reply
 	@RequestMapping(value = {"/edit-{post_id}-{reply_id}-reply"}, method = RequestMethod.GET)
 	public String editReply(@PathVariable int post_id, @PathVariable int reply_id, ModelMap model) {
-		
-		return "redirect:/detailedPost";
+		if(model.containsAttribute("user_id")){ 
+			model.addAttribute("editReply", replyService.findById(reply_id));
+			replyService.setCurrentlyWorkingReply(replyService.findById(reply_id));
+			replyService.setStatus(2);
+			return "redirect:/detailedPost";
+		}
+		return "redirect:/login";
 	}
-	
-	//TODO: update reply
-	@RequestMapping(value = {"/edit-{post_id}-{reply_id}-reply"}, method = RequestMethod.POST)
-	public String updateReply(@PathVariable int post_id, @PathVariable int reply_id, ModelMap model) {
-		
-		return "redirect:/detailedPost";
-	}
-
 
 	@RequestMapping(value = { "/delete-{post_id}-{reply_id}-reply" }, method = RequestMethod.GET)
 	public String deleteReply(@PathVariable int post_id, @PathVariable int reply_id, ModelMap model) {
@@ -200,11 +197,11 @@ public class AppController {
 		return "redirect:/login";
 	}
 	
-	//TODO: recursive reply
 	@RequestMapping(value= { "/reply-{post_id}-{reply_id}-{reply_depth}-reply"}, method = RequestMethod.GET)
 	public String recursiveReply(@PathVariable int post_id, @PathVariable int reply_id, @PathVariable int reply_depth, ModelMap model){
 		if(model.containsAttribute("user_id")) {
 			replyService.setCurrentlyWorkingReply(replyService.findById(reply_id));
+			replyService.setStatus(1); // Reply
 			return "redirect:/detailedPost";
 		}
 		return "redirect:/login";
@@ -216,16 +213,25 @@ public class AppController {
 			model.addAttribute("post", postService.getCurrentPost());
 			model.addAttribute("replies", replyService.findSortedReplies(postService.getCurrentPostID()));
 			model.addAttribute("reply", new Reply());
-			if(replyService.getCurrentlyWorkingReply() != null) {
+			model.addAttribute("recursiveReply", new Reply());
+			model.addAttribute("editReply", new Reply());
+			
+			
+			if(replyService.getStatus() == 1) { // Reply
 				int newDepth = replyService.getCurrentlyWorkingReply().getDepth() + 1;
 				model.addAttribute("recursiveReplyPressed", true);
-				model.addAttribute("recursiveReply", new Reply());
-				model.addAttribute("clickedReplyID", replyService.getCurrentlyWorkingReply().getId());
 				model.addAttribute("replyDepth", newDepth);
+				model.addAttribute("clickedReplyID", replyService.getCurrentlyWorkingReply().getId());
+				
 				if(newDepth > replyService.getMaxDepth())
 					replyService.setMaxDepth(newDepth);
 			}
-			replyService.setCurrentlyWorkingReply(null);
+			if(replyService.getStatus() == 2) {// Edit
+				model.addAttribute("editReplyPressed", true);
+				model.addAttribute("clickedReplyID", replyService.getCurrentlyWorkingReply().getId());
+			}
+				
+
 			return "detailedPost";
 		}
 		return "redirect:/login";
@@ -234,13 +240,21 @@ public class AppController {
 	@RequestMapping(value = { "/detailedPost" }, method = RequestMethod.POST)
 	public String saveReply(@Valid Reply reply, BindingResult result, ModelMap model){
 		if (model.containsAttribute("user_id")) {
+			
 			if (result.hasErrors()) {
 				return "detailedPost";
 			}
-			replyService.saveReply(reply);
+			
+			else if (replyService.getStatus() == 1 || replyService.getStatus() == 0)
+				replyService.saveReply(reply);
+			
+			else if (replyService.getStatus() == 2)
+				replyService.updateReply(reply);
+			
 			model.addAttribute("replies", replyService.findSortedReplies(reply.getPost_id()));
 			model.addAttribute("post", postService.getCurrentPost());
-			
+			replyService.setCurrentlyWorkingReply(null);
+			replyService.setStatus(0);
 			return "detailedPost";
 		}
 		return "redirect:/login";
