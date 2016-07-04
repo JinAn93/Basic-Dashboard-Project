@@ -35,4 +35,6 @@ public interface IUserDao {
 	 * @param id
 	 */
 	void deleteUserById(String id);
+
+	String hashPassword(String password);
 }

@@ -5,7 +5,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
@@ -20,14 +19,6 @@ public class User {
 	private String user_id;
 
 	@NotNull
-	@Pattern.List({
-	    @Pattern(regexp = "(?=.*[0-9]).+", message = "Password must contain one digit."),
-	    @Pattern(regexp = "(?=.*[a-z]).+", message = "Password must contain one lowercase letter."),
-	    @Pattern(regexp = "(?=.*[a-z]).+", message = "Password must contain one upper letter."),
-	    @Pattern(regexp = "(?=.*[!@#$%^&*+=?-_()/\"\\.,<>~`;:]).+", message ="Password must contain one special character."),
-	    @Pattern(regexp = "(?=\\S+$).+", message = "Password must contain no whitespace.")
-	})
-	@Size(min = 6, max = 15)
 	@Column(name = "PASSWORD", nullable = false) 	
 	private String password;
 

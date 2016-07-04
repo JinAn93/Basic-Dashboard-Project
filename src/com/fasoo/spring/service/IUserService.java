@@ -17,4 +17,6 @@ public interface IUserService {
 	List<User> findAllUsers();
 
 	boolean isUserIdUnique(String user_id);
+	
+	int isPasswordValid(String password);
 }

@@ -1,5 +1,7 @@
 package com.fasoo.spring.dao;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -29,5 +31,23 @@ public class UserDao extends AbstractDao<String, User> implements IUserDao {
 		Query query = getSession().createSQLQuery("delete from Users where user_id = :user_id");
 		query.setString("user_id", id);
 		query.executeUpdate();
+	}
+
+	public String hashPassword (String password){
+		MessageDigest md;
+		try {
+			md = MessageDigest.getInstance("SHA-256");
+			md.update(password.getBytes());
+			byte[] byteData = md.digest();
+
+			StringBuffer sb = new StringBuffer();
+			for (int i = 0; i < byteData.length; i++) {
+				sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
+			}
+			return sb.toString();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }
