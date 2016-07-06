@@ -18,6 +18,11 @@ body {
 	margin: auto;
 	text-align: center;
 	padding: 70px;
+	font-family: Helvetica;
+}
+
+input {
+	font-family: Helvetica;
 }
 
 h1 {

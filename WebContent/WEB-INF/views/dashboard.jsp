@@ -12,11 +12,13 @@ tr:first-child {
 	background-color: #C6C9C4;
 }
 
-h1 {
+body, h1, p {
+	font-family: Helvetica;
 	text-align: center;
 }
 
-p {
+#posts {
+	font-family: Helvetica;
 	text-align: center;
 }
 
@@ -28,6 +30,7 @@ p {
 	position: absolute;
 	bottom: 0;
 }
+
 </style>
 
 </head>
@@ -42,7 +45,7 @@ p {
 		<%=loggedinID%>, you are logged in!
 	</h1>
 	<p>List of Posts on Dashboard</p>
-	<table align="center" border="3" width="1000" height="75">
+	<table id="posts" align="center" border="3" width="1000" height="75">
 		<tr>
 			<td width="700">Title</td>
 			<td width="100">Post Date</td>

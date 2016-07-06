@@ -21,11 +21,14 @@
 	border: 1px solid black;
 	width: 1000px; 
 	height: "500";
-	text-align: center;
 }
 
 td, tr{
 	border: 1px solid black;
+}
+
+td:not(#contents) {
+	text-align: center;
 }
 
 .replies {
@@ -39,6 +42,9 @@ td, tr{
     padding-left: ${indentSize}px;
 }
 
+#postContents {
+	padding: 30px;
+}
 p {
 	line-height: 10px;
 	text-align: left;
@@ -46,6 +52,9 @@ p {
 	text-indent: 
 }
 
+pre {
+	font-family: Helvetica;
+}
 </style>
 </head>
 
@@ -80,7 +89,7 @@ p {
 		</tr>
 		<tr>
 			<td rowspan="2" width="150" height="200">Contents</td>
-			<td rowspan="2" colspan="3">${post.contents}</td>
+			<td id="postContents" rowspan="2" colspan="3"><pre>${post.contents}</pre></td>
 		</tr>
 
 	</table>

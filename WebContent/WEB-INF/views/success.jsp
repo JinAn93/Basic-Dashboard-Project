@@ -7,6 +7,13 @@
 <meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
 <title>Success Confirmation Page</title>
 </head>
+
+<style>
+body {
+	text-align: center;
+	font-family: Helvetica;
+}
+</style>
 <body>
 	<h4>${success}</h4>
 	<br />
