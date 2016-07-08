@@ -36,5 +36,10 @@ public interface IUserDao {
 	 */
 	void deleteUserById(String id);
 
+	/**
+	 * Hash Password using SHA-256
+	 * @param password
+	 * @return
+	 */
 	String hashPassword(String password);
 }

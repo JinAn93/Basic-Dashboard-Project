@@ -13,7 +13,6 @@ import com.fasoo.spring.model.Reply;
 public class ReplyDao extends AbstractDao<Integer, Reply> implements IReplyDao {
 
 	private Reply currentlyWorkingReply;
-	private int maxDepth = 0;
 
 	public Reply findById(int id) {
 		return getByKey(id);
@@ -48,14 +47,6 @@ public class ReplyDao extends AbstractDao<Integer, Reply> implements IReplyDao {
 
 	public void setCurrentlyWorkingReply(Reply currentlyWorkingReply) {
 		this.currentlyWorkingReply = currentlyWorkingReply;
-	}
-
-	public int getMaxDepth() {
-		return maxDepth;
-	}
-
-	public void setMaxDepth(int maxDepth) {
-		this.maxDepth = maxDepth;
 	}
 
 	public List<Reply> findSortedReplies(int post_id) {

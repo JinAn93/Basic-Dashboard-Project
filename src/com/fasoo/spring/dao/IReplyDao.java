@@ -50,11 +50,15 @@ public interface IReplyDao {
 	 */
 	void deleteReplyById (int id);
 	
+	/**
+	 * Return currently working reply that has been stored previously
+	 * @return
+	 */
 	Reply getCurrentlyWorkingReply();
 	
+	/**
+	 * Set currently working reply object
+	 * @param currentlyWorkingReply
+	 */
 	void setCurrentlyWorkingReply(Reply currentlyWorkingReply);
-	
-	int getMaxDepth();
-	
-	void setMaxDepth(int maxDepth);
 }
