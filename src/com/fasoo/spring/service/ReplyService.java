@@ -16,8 +16,6 @@ public class ReplyService implements IReplyService {
 	@Autowired
 	private IReplyDao dao;
 	
-	private int status = 0;
-	
 	public Reply findById(int id) {
 		return dao.findById(id);
 	}
@@ -58,21 +56,5 @@ public class ReplyService implements IReplyService {
 
 	public List<Reply> findSortedReplies(int post_id) {
 		return dao.findSortedReplies(post_id);
-	}
-
-	public void setMaxDepth(int maxDepth) {
-		dao.setMaxDepth(maxDepth);		
-	}
-
-	public int getMaxDepth() {
-		return dao.getMaxDepth();
-	}
-
-	public int getStatus() {
-		return status;
-	}
-
-	public void setStatus(int status) {
-		this.status = status;
 	}
 }

@@ -18,7 +18,7 @@ public class PostService implements IPostService{
 	
 	private Post currentPost; 
 	private int currentPostID;
-
+	
 	public Post findById(int id) {
 		return dao.findById(id);
 	}

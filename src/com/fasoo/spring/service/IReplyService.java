@@ -23,12 +23,4 @@ public interface IReplyService {
 	void setCurrentlyWorkingReply(Reply currentlyWorkingReply);
 	
 	Reply getCurrentlyWorkingReply();
-	
-	void setMaxDepth(int maxDepth);
-	
-	int getMaxDepth();
-	
-	void setStatus (int status);
-	
-	int getStatus();
 }
